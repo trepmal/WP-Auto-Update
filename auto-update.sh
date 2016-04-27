@@ -35,7 +35,7 @@ if [ ! -z $checkupd ]; then
 
 	logger "[WPAutoUpdate] Core update: ${coreupdate} to ${updateto}"
 
-	dbupdate=`wp $flags core update-db --no-color | grep "^Success:" | tr -d '\n'`
+	dbupdate=`wp $flags core update-db --no-color --network | grep "^Success:" | tr -d '\n'`
 	dbupdate=${dbupdate/Success: /}
 	logger "[WPAutoUpdate] DB update: ${dbupdate}"
 
