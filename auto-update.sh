@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # self-update wp-cli
-wp --allow-root cli update --major --minor --patch --yes --quiet
+wp --allow-root cli update --major --minor --patch --yes --quiet 2&> /dev/null
 
 if [ -z $1 ]; then
 	path='';
@@ -25,6 +25,8 @@ logger "[WPAutoUpdate] $blogname | $bloghome"
 #    # #    # #   #  #
  ####   ####  #    # ######
 
+network=`wp $flags eval 'echo is_multisite()?"--network":"";'`
+
 checkupd=`wp $flags core check-update --format=yaml | grep 'version: ' | tr -d ' '`
 if [ ! -z $checkupd ]; then
 	updateto=${checkupd/version:/}
@@ -35,7 +37,7 @@ if [ ! -z $checkupd ]; then
 
 	logger "[WPAutoUpdate] Core update: ${coreupdate} to ${updateto}"
 
-	dbupdate=`wp $flags core update-db --no-color --network | grep "^Success:" | tr -d '\n'`
+	dbupdate=`wp $flags core update-db --no-color $network | grep "^Success:" | tr -d '\n'`
 	dbupdate=${dbupdate/Success: /}
 	logger "[WPAutoUpdate] DB update: ${dbupdate}"
 
@@ -93,4 +95,6 @@ logger "[WPAutoUpdate] Theme updates: ${themelist%, }"
 #    # #      #      #    # #   ##    #    # #
  ####  ###### ###### #    # #    #     ####  #
 
-logger "[WPAutoUpdate] `wp $flags cache flush`"
+cacheflush=`wp $flags cache flush`
+cacheflush=${cacheflush/Success: /}
+logger "[WPAutoUpdate] $cacheflush"
