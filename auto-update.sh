@@ -53,14 +53,14 @@ fi
 #      #      #    # #    # # #   ## #    #
 #      ######  ####   ####  # #    #  ####
 
-pluginupdate=`wp $flags plugin update --all --dry-run --format=summary | grep "from version"`
+pluginupdate=`wp $flags plugin update --all --format=summary | grep "from version"`
 pluginlist=''
 
 if [ -z "$pluginupdate" ]; then
 	pluginlist='No plugins updated';
 else
 	while read -r plugin; do
-		pluginlist=$pluginlist"${plugin/ update from*/}, "
+		pluginlist=$pluginlist"${plugin/ updated successfully*/}, "
 	done <<< "$pluginupdate"
 fi
 
